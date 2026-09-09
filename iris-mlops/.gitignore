@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# Data, models, metrics, coverage
+data/
+models/
+metrics.json
+coverage.xml
+
+# Pytest cache
+.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
