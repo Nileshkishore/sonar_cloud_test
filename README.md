@@ -59,3 +59,4 @@ Connect to SonarCloud
 3. Create a GitHub repository and push this project.
 4. In the GitHub repository settings, add a secret named `SONAR_TOKEN` with the token from SonarCloud.
 5. The provided GitHub Actions workflow `.github/workflows/sonarcloud.yml` will run on push and pull requests, run tests and upload coverage to SonarCloud.
+
