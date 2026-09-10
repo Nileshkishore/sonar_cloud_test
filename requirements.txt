@@ -7,7 +7,7 @@ mlflow
 setuptools==68.1.2
 coverage==7.16.0
 
-requests=
+requests
 urllib3==1.25.8
 Jinja2==2.10.1
 PyYAML==5.3.1
