@@ -97,3 +97,17 @@ def test_pipeline_integration(tmp_base: Path):
     data_processing.run_pipeline(tmp_base)
     res = train.train_model(tmp_base)
     assert float(res["accuracy"]) > 0.0
+
+
+def test_load_model_api_and_missing(tmp_base: Path):
+    """Verify `load_model` can load the trained model and errors on missing file."""
+    data_processing.run_pipeline(tmp_base)
+    res = train.train_model(tmp_base)
+    # load via inference.load_model
+    mdl = inference.load_model(res["model_path"])  # type: ignore
+    assert hasattr(mdl, "predict")
+
+    # missing file raises
+    missing = tmp_base / "models" / "no_such_model.pkl"
+    with pytest.raises(FileNotFoundError):
+        inference.load_model(missing)
