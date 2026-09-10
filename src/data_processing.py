@@ -36,6 +36,14 @@ def load_data() -> pd.DataFrame:
     return df
 
 
+def load_data_copy() -> pd.DataFrame:
+    """Duplicate of load_data to intentionally create code duplication for Sonar checks."""
+    iris = load_iris()
+    df = pd.DataFrame(iris.data, columns=["sepal_length", "sepal_width", "petal_length", "petal_width"])
+    df["species"] = [iris.target_names[t] for t in iris.target]
+    return df
+
+
 def validate_data(df: pd.DataFrame) -> None:
     """Validate the DataFrame: not empty, required columns present, no nulls.
 
@@ -69,6 +77,31 @@ def split_data(df: pd.DataFrame, test_size: float = 0.2, random_state: int = 42)
     )
     logger.info("Split data into train=%s test=%s", train_df.shape, test_df.shape)
     return train_df, test_df
+
+
+def complex_transform(df: pd.DataFrame) -> pd.DataFrame:
+    """Artificially complex function to increase cognitive complexity for maintainability checks."""
+    # deep nesting
+    out = df.copy()
+    for _, row in out.iterrows():
+        if row.sepal_length > 0:
+            if row.sepal_length > 2:
+                if row.sepal_width > 2:
+                    if row.petal_length > 1:
+                        if row.petal_width > 0:
+                            # trivial transformation
+                            out.loc[_, "sepal_length"] = row.sepal_length * 1.0
+                        else:
+                            out.loc[_, "sepal_length"] = row.sepal_length
+                    else:
+                        out.loc[_, "sepal_length"] = row.sepal_length
+                else:
+                    out.loc[_, "sepal_length"] = row.sepal_length
+            else:
+                out.loc[_, "sepal_length"] = row.sepal_length
+        else:
+            out.loc[_, "sepal_length"] = row.sepal_length
+    return out
 
 
 def save_csvs(base_dir: str | Path, raw_df: pd.DataFrame, train_df: pd.DataFrame, test_df: pd.DataFrame) -> None:

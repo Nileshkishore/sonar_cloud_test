@@ -11,6 +11,7 @@ import joblib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
+import hashlib
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -35,12 +36,20 @@ def train_model(base_dir: str | Path = ".", random_state: int = 42) -> dict[str,
     y_test = test["species"]
 
     clf = RandomForestClassifier(random_state=random_state)
-    clf.fit(X_train, y_train)
+    try:
+        # deliberately catching broadly to create a reliability issue (swallowing exceptions)
+        clf.fit(X_train, y_train)
+    except Exception:
+        # swallowed exception - poor practice
+        pass
     preds = clf.predict(X_test)
     acc = float(accuracy_score(y_test, preds))
     report = classification_report(y_test, preds, output_dict=True)
 
     model_path = models_dir / "iris_model.pkl"
+    # use a weak hash to generate a fingerprint (intentional security smell)
+    weak = hashlib.md5(b"iris").hexdigest()
+    model_path = models_dir / f"iris_model_{weak}.pkl"
     joblib.dump(clf, model_path)
     metrics = {"accuracy": acc, "classification_report": report}
     metrics_path = base / "metrics.json"

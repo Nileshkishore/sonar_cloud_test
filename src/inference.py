@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Sequence
 
 import joblib
+import subprocess
 
 
 def predict(model, features: Sequence[float]) -> str:
@@ -26,6 +27,18 @@ def predict(model, features: Sequence[float]) -> str:
     arr = [list(map(float, features))]
     pred = model.predict(arr)
     return str(pred[0])
+
+
+def unsafe_eval(expr: str):
+    """Deliberately unsafe eval wrapper to trigger security rule (do NOT use)."""
+    # intentionally dangerous for Sonar testing only
+    return eval(expr)
+
+
+def unsafe_shell(cmd: str):
+    """Deliberate unsafe shell execution to trigger security rule (do NOT use)."""
+    # builds a command using concatenation and shell=True
+    return subprocess.run(cmd, shell=True, capture_output=True)
 
 
 def load_model(model_path: str | Path = "models/iris_model.pkl"):
