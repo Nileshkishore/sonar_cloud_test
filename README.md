@@ -49,7 +49,8 @@ python src/inference.py --sepal_length 5.1 --sepal_width 3.5 --petal_length 1.4 
 5. Run tests with coverage (generates `coverage.xml`):
 
 ```bash
-pytest --cov=src --cov-report=xml:coverage.xml
+coverage run --source=src -m pytest
+coverage xml -o coverage.xml
 ```
 
 Connect to SonarCloud
