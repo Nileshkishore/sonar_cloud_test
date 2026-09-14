@@ -43,6 +43,9 @@ jobs:
       - name: Train model
         run: python src/train.py
 
+      - name: List library
+        run: pip freeze
+
       - name: Run tests with coverage (coverage.py)
         run: |
           python -m pip install --upgrade coverage
