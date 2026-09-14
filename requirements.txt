@@ -6,6 +6,7 @@ pytest==7.3.1
 mlflow
 setuptools==68.1.2
 coverage==7.16.0
+ipykernel
 
 requests
 urllib3==1.25.8
