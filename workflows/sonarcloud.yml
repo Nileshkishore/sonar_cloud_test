@@ -37,17 +37,6 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
 
-      - name: Install nbconvert
-        run: |
-          python -m pip install --upgrade pip
-          pip install nbconvert
-
-      - name: Convert notebooks to Python modules
-        run: |
-          echo "Converting notebooks in src/ to .py files"
-          jupyter nbconvert --to script src/*.ipynb --output-dir=src || true
-          ls -lah src || true
-
       - name: Run data pipeline
         run: python src/data_processing.py
 
