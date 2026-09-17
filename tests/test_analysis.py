@@ -26,6 +26,8 @@ Notes:
 import os
 from testbook import testbook
 
+from unittest.mock import Mock
+
 NOTEBOOK_PATH = os.path.join(os.path.dirname(__file__), '..', 'src', 'analysis.ipynb')
 
 
@@ -34,3 +36,24 @@ def test_add(tb):
     add = tb.ref('add')
     assert add(2, 3) == 5
     assert add(-1, 1) == 0
+
+@testbook(NOTEBOOK_PATH, execute=True)
+def test_add_with_mock(tb):
+    # get the real `add` function from the executed notebook
+    real_add = tb.ref('add')
+    
+    # create a mock that wraps the real function so calls are recorded
+    # while still executing the real implementation
+    mock_add = Mock(wraps=real_add)
+
+    # optionally make tb.ref return the mocked wrapper (keeps same call site)
+    tb.ref = Mock(return_value=mock_add)
+
+    add = tb.ref('add')
+    assert add(2, 3) == 5
+    assert add(-1, 1) == 0
+
+    # ensure the mock wrapper was called and forwarded to the real function
+    mock_add.assert_called()
+    mock_add.assert_any_call(2, 3)
+    mock_add.assert_any_call(-1, 1)
