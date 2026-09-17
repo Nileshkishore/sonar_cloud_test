@@ -14,7 +14,7 @@ permissions:
 jobs:
   sonarqube:
     name: SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,16 +44,47 @@ jobs:
         run: python src/train.py
 
       - name: Run tests with coverage (coverage.py)
+        env:
+          COVERAGE_PROCESS_START: ${{ github.workspace }}/.coveragerc
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           python -m pip install --upgrade coverage
-          coverage run --source=src -m pytest -v
+          mkdir -p reports
+          coverage run --source=src -m pytest --junitxml=reports/junit.xml
           coverage xml -o coverage.xml
 
+      - name: Print `test_add` result
+        run: |
+          python - <<'PY'
+import xml.etree.ElementTree as ET
+import sys
+import os
+xml_path = 'reports/junit.xml'
+if not os.path.exists(xml_path):
+    print('No junit report found at', xml_path)
+    sys.exit(0)
+tree = ET.parse(xml_path)
+root = tree.getroot()
+found = False
+for testcase in root.iter('testcase'):
+    name = testcase.get('name')
+    if name == 'test_add' or name.endswith('.test_add'):
+        found = True
+        failure = testcase.find('failure') is not None
+        error = testcase.find('error') is not None
+        if not failure and not error:
+            print('TEST PASSED: add function (test_add)')
+        else:
+            print('TEST FAILED: add function (test_add)')
+        break
+if not found:
+    print('TEST INFO: test_add not found in junit report')
+PY
+
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
+        uses: SonarSource/sonarcloud-github-action@v2.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
 
       - name: Upload model and metrics
         uses: actions/upload-artifact@v4
