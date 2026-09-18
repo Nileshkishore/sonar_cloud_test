@@ -54,6 +54,22 @@ def validate_data(df: pd.DataFrame) -> None:
         raise ValueError("Null values found in data")
     logger.info("Data validation passed")
 
+def split_data(df: pd.DataFrame, test_size: float = 0.2, random_state: int = 42) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Stratified train/test split.
+
+    Returns:
+        (train_df, test_df)
+    """
+    train_df, test_df = train_test_split(
+        df,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=df["species"],
+    )
+    logger.info("Split data into train=%s test=%s", train_df.shape, test_df.shape)
+    return train_df, test_df
+
+
 
 def split_data(df: pd.DataFrame, test_size: float = 0.2, random_state: int = 42) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Stratified train/test split.
