@@ -1,6 +1,13 @@
 [run]
+parallel = true
+concurrency = multiprocessing, thread
+sigterm = true
 branch = True
 source = src
+
+[paths]
+source =
+    src
 
 [report]
 omit =
