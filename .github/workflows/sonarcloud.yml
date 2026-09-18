@@ -93,6 +93,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
 
+      - name: Install dependencies
+        run: |
+          ls -al
+
       - name: Upload model and metrics
         uses: actions/upload-artifact@v4
         with:
